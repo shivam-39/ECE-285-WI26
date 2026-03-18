@@ -1,0 +1,168 @@
+# Corruption-Aware & Recon-Stable GAN 
+
+Stable and Robust Image Inpainting Using Corruption-Aware GANs and Iterative Reconstruction Stability Analysis.
+
+---
+
+## Project Structure
+
+```
+cars_dcgan/
+config.py        -> ALL hyperparameters
+corruption.py    -> Mask / Blur / Low-Res / Noise operators
+dataset.py       -> Image DataLoader
+models.py        -> Generator (U-Net) + Discriminator (PatchGAN)
+losses.py        -> GAN / L1 / Stability loss functions
+train.py         -> Training loop (tqdm, AMP, checkpointing, CSV log)
+evaluate.py      -> PSNR / SSIM / LPIPS + Stability Analysis
+visualize.py     -> Loss curves, sample grids, hyperparameter table
+main.py          -> Entry point (CLI)
+requirements.txt -> package dependencies
+```
+
+---
+
+## Setup
+
+### 1. Create a virtual environment
+```bash
+# Recommended - conda & python 3.11
+conda create --name cars_gan python=3.11 && conda activate cars_gan
+
+# If using UV
+uv venv .vcars_gan && source .vcars_gan/bin/activate
+
+# If using venv
+python -m venv .vcars_gan && source .vcars_gan/bin/activate
+
+# If on cloud-based env or dsmlp
+conda create --name cars_gan python=3.11
+source /opt/conda/etc/profile.d/conda.sh
+conda activate cars_gan
+
+```
+### 2. Install dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Download the Intel Image Classification dataset
+```bash
+https://www.kaggle.com/datasets/puneet6060/intel-image-classification
+Extract and place all images under ./data/ (sub-folders are fine)
+```
+
+---
+
+## Usage
+
+### Train from scratch
+```bash
+python main.py
+```
+
+### Resume training from a checkpoint
+```bash
+python main.py --resume checkpoints/ckpt_epoch_0050.pt
+```
+
+### Override hyperparameters via CLI
+```bash
+python main.py --img-size 128 --batch-size 16 --epochs 50
+```
+
+### Evaluate a trained model (no training)
+```bash
+python main.py --eval-only --checkpoint checkpoints/final.pt
+```
+
+### Run iterative stability analysis only
+```bash
+python main.py --stability-only --checkpoint checkpoints/final.pt
+```
+
+---
+
+<!-- ## Hyperparameter Tuning
+
+**All tunable values live in `config.py`** — do not hard-coded elsewhere.
+
+| Parameter | Default | Notes |
+|-----------|---------|-------|
+| `IMG_SIZE` | 256 | Reduce to 128 for faster iteration |
+| `BATCH_SIZE` | 8 | Safe for 1× GPU w/ 16 GB VRAM at 256² |
+| `NUM_EPOCHS` | 100 | |
+| `LEARNING_RATE_G / D` | 2e-4 / 1e-4 | DCGAN defaults |
+| `LAMBDA_GAN / L1 / STAB` | 1 / 10 / 2 | Loss weights |
+| `GEN_BASE_FILTERS` | 64 | Double for capacity |
+| `CORRUPTION_PROBS` | [0.25×4] | Adjust sampling distribution |
+
+--- -->
+
+## Outputs
+
+At  each run a folder with current timestamp is created and all below sub-folder are inside that timestamp folder.
+
+<table class="demo">
+<thead>
+    <tr>
+        <th>Path</th>
+        <th>Contents</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td><code>plots/hyperparameters.png</code></td>
+        <td>Hyperparameter table</td>
+    </tr>
+    <tr>
+        <td><code>plots/loss_curves.png</code></td>
+        <td>Training/validation loss curves</td>
+    </tr>
+    <tr>
+        <td><code>results/epoch_XXXX_<type>.png</code></td>
+        <td>Sample image grids per corruption</td>
+    </tr>
+    <tr>
+        <td><code>results/stability_analysis.png</code></td>
+        <td>PSNR/SSIM/LPIPS over iterations</td>
+    </tr>
+    <tr>
+        <td><code>checkpoints/ckpt_epoch_XXXX.pt</code></td>
+        <td>Model checkpoints</td>
+    </tr>
+    <tr>
+        <td><code>logs/training_log.csv</code></td>
+        <td>Per-epoch loss values</td>
+    </tr>
+    </tbody>
+</table>
+
+
+## Architecture Summary
+
+**Generator** - Corruption-Aware U-Net (DCGAN)
+- Input: corrupted image + spatially-broadcast corruption-type vector c (&isin;R<sup>4</sup>)
+- Encoder: 6× strided Conv2d + LeakyReLU + BatchNorm
+- Bottleneck: Conv2d + ReLU
+- Decoder: 6× ConvTranspose2d + BatchNorm + ReLU (dropout in first 3 layers)
+- Skip connections link every encoder layer to its symmetric decoder layer
+- Output: Tanh -> [-1, 1]
+
+**Discriminator** — PatchGAN (DCGAN)
+- Operates on local image patches (not global scalar output)
+- 3× strided Conv2d layers + LeakyReLU + BatchNorm
+- Output: spatial logit map [B, 1, H', W']
+
+**Loss**
+```
+L_total = λ_GAN × L_GAN + λ_L1 × L_L1 + λ_stab × L_stab
+```
+
+---
+
+## Initial Run
+
+- GPU: 1× with ≥ 8 GB VRAM (16 GB for comfortable batch_size=8 at 256 x 256)
+- RAM: 16 GB
+- Suggested quick test: `--img-size 128 --batch-size 16 --epochs 10`
