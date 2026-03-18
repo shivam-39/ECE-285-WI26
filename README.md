@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# Code base for ECE-285 Project
-=======
 # Corruption-Aware & Recon-Stable GAN 
 
 Stable and Robust Image Inpainting Using Corruption-Aware GANs and Iterative Reconstruction Stability Analysis.
@@ -169,4 +166,3 @@ L_total = λ_GAN × L_GAN + λ_L1 × L_L1 + λ_stab × L_stab
 - GPU: 1× with ≥ 8 GB VRAM (16 GB for comfortable batch_size=8 at 256 x 256)
 - RAM: 16 GB
 - Suggested quick test: `--img-size 128 --batch-size 16 --epochs 10`
->>>>>>> feature/models
