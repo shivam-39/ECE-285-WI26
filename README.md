@@ -16,6 +16,8 @@ losses.py        -> GAN / L1 / Stability loss functions
 train.py         -> Training loop (tqdm, AMP, checkpointing, CSV log)
 evaluate.py      -> PSNR / SSIM / LPIPS + Stability Analysis
 visualize.py     -> Loss curves, sample grids, hyperparameter table
+stability.py     -> Full IRSA pipeline (per-corruption drift plots and metrics)
+sota_compare.py  -> Comparison against state-of-the-art inpainting model
 main.py          -> Entry point (CLI)
 requirements.txt -> package dependencies
 ```
@@ -134,6 +136,14 @@ At  each run a folder with current timestamp is created and all below sub-folder
     <tr>
         <td><code>logs/training_log.csv</code></td>
         <td>Per-epoch loss values</td>
+    </tr>
+    <tr>
+        <td><code>results/stability_full.png</code></td>
+        <td>Full IRSA drift plots per corruption type from stability.py</td>
+    </tr>
+    <tr>
+        <td><code>results/sota_comparison.png</code></td>
+        <td>Side-by-side metric comparison against SOTA model</td>
     </tr>
     </tbody>
 </table>

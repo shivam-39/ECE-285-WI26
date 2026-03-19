@@ -13,6 +13,7 @@ from models    import build_models, print_model_summary
 from train     import train, load_checkpoint
 from evaluate  import evaluate, stability_analysis
 from visualize import print_hyperparameter_table, save_sample_grid
+from stability import run_stability_analysis
 
 
 
@@ -62,13 +63,15 @@ def main():
         print("[Warning] CUDA not available — running on CPU (training will be slow).")
         cfg.DEVICE = "cpu"
         cfg.USE_AMP = False
+    else:
+        print("[OK] CUDA available — running on GPU (training will be fast).")
 
     # Check and create dirs if required.
     cfg.make_dir() 
     # Print hyperparameter table
     print_hyperparameter_table()
     
-    #Data
+    # Data
     train_loader, val_loader = build_dataloaders(
         root_dir = cfg.DATA_ROOT,
         img_size = cfg.IMG_SIZE,
@@ -106,6 +109,7 @@ def main():
         for c_idx in range(cfg.NUM_CORRUPTION_TYPES):
             print(f"\n[Stability Analysis — Corruption: {c_idx}]")
             stability_analysis(G, batch, corruption_idx=c_idx, device=device)
+        run_stability_analysis(G, batch, device=device)
         return
 
     # Full training
@@ -123,6 +127,7 @@ def main():
     batch = next(iter(val_loader))[:8].to(device)
     for c_idx in range(cfg.NUM_CORRUPTION_TYPES):
         stability_analysis(G, batch, corruption_idx=c_idx, device=device)
+    run_stability_analysis(G, batch, device=device)
 
 
 if __name__ == "__main__":
