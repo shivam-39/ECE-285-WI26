@@ -10,8 +10,8 @@ from torch.amp.autocast_mode import autocast
 from torch.amp.grad_scaler import GradScaler
 from tqdm import tqdm
 
-import config as cfg
-from corruption import corrupt_batch
+import src.config as cfg
+from src.corruption import corrupt_batch
 from losses import TotalLoss
 from visualize import save_sample_grid, plot_loss_curves
 

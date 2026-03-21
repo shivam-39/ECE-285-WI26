@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-import config as cfg
+import src.config as cfg
 
 
 
@@ -85,7 +85,7 @@ def _re_corrupt(
     Apply the same corruption type (from c_batch) to each image in x_batch.
     This is called inside stability_loss to avoid gradient tracking.
     """
-    from corruption import _CORRUPTION_FNS
+    from src.corruption import _CORRUPTION_FNS
     B = x_batch.shape[0]
     y_list = []
     for i in range(B):

@@ -7,7 +7,7 @@ import os
 import numpy as np
 import torch
 
-import config as cfg
+import src.config as cfg
 from dataset   import build_dataloaders
 from models    import build_models, print_model_summary
 from train     import train, load_checkpoint

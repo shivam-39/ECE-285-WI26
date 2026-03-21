@@ -6,7 +6,7 @@ import torch
 import torch.nn.functional as F
 import torchvision.transforms.functional as TF
 
-import config as cfg
+import src.config as cfg
 
 
 # Corruption index constants (matches CORRUPTION_PROBS order in config)

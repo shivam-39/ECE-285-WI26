@@ -40,10 +40,10 @@ import matplotlib.pyplot as plt
 from PIL import Image
 from tqdm import tqdm
 
-import config as cfg
+import src.config as cfg
 from dataset import build_dataloaders
 from evaluate import psnr, ssim, compute_lpips   # reuse your metric functions
-from corruption import corrupt_batch              # to extract masks for LaMa
+from src.corruption import corrupt_batch              # to extract masks for LaMa
 
 
 # ---------------------------------------------------------------------------
@@ -140,7 +140,7 @@ def lama_stability_analysis(
     Mirrors evaluate.stability_analysis() but for LaMa.
     Uses MASKING corruption (LaMa's native task) for the iterative loop.
     """
-    from corruption import _CORRUPTION_FNS, one_hot_vector
+    from src.corruption import _CORRUPTION_FNS, one_hot_vector
     # Corruption index 0 is assumed to be masking — adjust if your ordering differs
     MASK_CORRUPTION_IDX = 0
     corrupt_fn = _CORRUPTION_FNS[MASK_CORRUPTION_IDX]
