@@ -14,6 +14,7 @@ from train     import train, load_checkpoint
 from evaluate  import evaluate, stability_analysis
 from visualize import print_hyperparameter_table, save_sample_grid
 from stability import run_stability_analysis
+from gan_metrics import evaluate_gan_metrics, evaluate_all_corruptions
 
 
 
@@ -33,14 +34,62 @@ def set_seed(seed: int = cfg.SEED):
 # ---------------------------------------------------------------------------
 def parse_args():
     p = argparse.ArgumentParser(description="Corruption-Aware GAN for Image Inpainting (ECE-285)")
-    p.add_argument("--resume", type=str, default=None, help="Path to checkpoint .pt file to resume training.")
-    p.add_argument("--eval-only", action="store_true", help="Skip training; run evaluation on the val set.")
-    p.add_argument("--stability-only", action="store_true", help="Skip training; run stability analysis only.")
-    p.add_argument("--checkpoint", type=str, default=None, help="Checkpoint to load for eval/stability-only modes.")
-    p.add_argument("--data-root", type=str, default=cfg.DATA_ROOT, help=f"Path to image dataset (default: {cfg.DATA_ROOT})")
-    p.add_argument("--img-size", type=int, default=cfg.IMG_SIZE, help=f"Image resolution (default: {cfg.IMG_SIZE})")
-    p.add_argument("--batch-size", type=int, default=cfg.BATCH_SIZE, help=f"Batch size (default: {cfg.BATCH_SIZE})")
-    p.add_argument("--epochs", type=int, default=cfg.NUM_EPOCHS, help=f"Number of training epochs (default: {cfg.NUM_EPOCHS})")
+
+    p.add_argument("--resume", 
+                   type=str, 
+                   default=None, 
+                   help="Path to checkpoint .pt file to resume training.")
+    
+    p.add_argument("--eval-only", 
+                   action="store_true", 
+                   help="Skip training; run evaluation on the val set.")
+    
+    p.add_argument("--stability-only", 
+                   action="store_true", 
+                   help="Skip training; run stability analysis only.")
+    
+    p.add_argument("--checkpoint", 
+                   type=str, 
+                   default=None, 
+                   help="Checkpoint to load for eval/stability-only modes.")
+    
+    p.add_argument("--data-root", 
+                   type=str, 
+                   default=cfg.DATA_ROOT, 
+                   help=f"Path to image dataset (default: {cfg.DATA_ROOT})")
+    
+    p.add_argument("--img-size", 
+                   type=int, 
+                   default=cfg.IMG_SIZE, 
+                   help=f"Image resolution (default: {cfg.IMG_SIZE})")
+    
+    p.add_argument("--batch-size", 
+                   type=int, 
+                   default=cfg.BATCH_SIZE, 
+                   help=f"Batch size (default: {cfg.BATCH_SIZE})")
+    
+    p.add_argument("--epochs", 
+                   type=int, 
+                   default=cfg.NUM_EPOCHS, 
+                   help=f"Number of training epochs (default: {cfg.NUM_EPOCHS})")
+    
+    p.add_argument("--gan-metrics",   
+                   action="store_true",
+                   help="Compute Inception Score + FID using a trained checkpoint.")
+    
+    p.add_argument("--metrics-n",     
+                   type=int, 
+                   default=5000,
+                   help="Number of images for IS/FID evaluation (default: 5000).")
+    
+    p.add_argument("--metrics-corruption", 
+                   type=str, 
+                   default="random",
+                   choices=["random", "mask", "blur", "lowres", "noise", "all"],
+                   help="Corruption type to use for IS/FID: "
+                        "random (training mix) | mask | blur | lowres | noise | "
+                        "all (runs each type separately).")
+
     return p.parse_args()
 
 
@@ -110,6 +159,24 @@ def main():
             print(f"\n[Stability Analysis — Corruption: {c_idx}]")
             stability_analysis(G, batch, corruption_idx=c_idx, device=device)
         run_stability_analysis(G, batch, device=device)
+        return
+    
+    # GAN metrics (IS + FID) 
+    if args.gan_metrics:
+        from corruption import CORRUPTION_NAMES
+        if not (args.checkpoint or args.resume):
+            print("[Error] --gan-metrics requires --checkpoint <path>")
+            return
+ 
+        c_arg = args.metrics_corruption
+        if c_arg == "all":
+            evaluate_all_corruptions(G, val_loader, device,
+                                     n_samples=args.metrics_n)
+        else:
+            c_idx = -1 if c_arg == "random" else CORRUPTION_NAMES.index(c_arg)
+            evaluate_gan_metrics(G, val_loader, device,
+                                 n_samples=args.metrics_n,
+                                 corruption_idx=c_idx)
         return
 
     # Full training

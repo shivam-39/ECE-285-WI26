@@ -1,3 +1,5 @@
+# stability.py — Iterative Reconstruction Stability Analysis
+
 import os
 import math
 from typing import Dict, List, Optional, Tuple

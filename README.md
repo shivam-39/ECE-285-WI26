@@ -7,7 +7,7 @@ Stable and Robust Image Inpainting Using Corruption-Aware GANs and Iterative Rec
 ## Project Structure
 
 ```
-cars_dcgan/
+cars_dcgan/src
 config.py        -> ALL hyperparameters
 corruption.py    -> Mask / Blur / Low-Res / Noise operators
 dataset.py       -> Image DataLoader
@@ -29,7 +29,8 @@ requirements.txt -> package dependencies
 ### 1. Create a virtual environment
 ```bash
 # Recommended - conda & python 3.11
-conda create --name cars_gan python=3.11 && conda activate cars_gan
+conda create --name cars_gan python=3.11
+conda activate cars_dcgan
 
 # If using UV
 uv venv .vcars_gan && source .vcars_gan/bin/activate
@@ -50,37 +51,37 @@ pip install -r requirements.txt
 
 ### 3. Download the Intel Image Classification dataset
 ```bash
+# Extract and place all images under data directory (sub-folders are fine)
 https://www.kaggle.com/datasets/puneet6060/intel-image-classification
-Extract and place all images under ./data/ (sub-folders are fine)
 ```
 
 ---
 
 ## Usage
-
-### Train from scratch
 ```bash
-python main.py
-```
+# Train from scratch
+python src/main.py
 
-### Resume training from a checkpoint
-```bash
-python main.py --resume checkpoints/ckpt_epoch_0050.pt
-```
+# Resume training from a checkpoint
+python src/main.py --resume file_path/ckpt_epoch_0050.pt
 
-### Override hyperparameters via CLI
-```bash
-python main.py --img-size 128 --batch-size 16 --epochs 50
-```
+# Override hyperparameters via CLI
+python src/main.py --img-size 128 --batch-size 16 --epochs 50
 
-### Evaluate a trained model (no training)
-```bash
-python main.py --eval-only --checkpoint checkpoints/final.pt
-```
+# Evaluate a trained model (no training)
+python src/main.py --eval-only --checkpoint file_path/final.pt
 
-### Run iterative stability analysis only
-```bash
-python main.py --stability-only --checkpoint checkpoints/final.pt
+# Run iterative stability analysis only
+python src/main.py --stability-only --checkpoint file_path/final.pt
+
+# Run Sota Comaprison with trained model - Evaluate LaMa only
+python src/sota_compare.py
+
+# Run Sota Comaprison and print comparison against test-model's saved metrics
+python src/sota_compare.py --test-model-psnr 28.5 --test-model-ssim 0.88 --test-model-lpips 0.12
+
+# Run Sota Comaprison - Limit to N batches (fast smoke-test):
+python src/sota_compare.py --max-batches 5
 ```
 
 ---
