@@ -13,8 +13,8 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 
-import config as cfg
-from corruption import corrupt_batch, corrupt_single
+import src.config as cfg
+from src.corruption import corrupt_batch, corrupt_single
 
 
 # Optional LPIPS
@@ -144,7 +144,7 @@ def stability_analysis(
     history_lpips.append(0.0)
 
     x_hat = x.clone()
-    from corruption import _CORRUPTION_FNS, one_hot_vector
+    from src.corruption import _CORRUPTION_FNS, one_hot_vector
     corrupt_fn = _CORRUPTION_FNS[corruption_idx]
     c = torch.stack([one_hot_vector(corruption_idx)] * x.shape[0]).to(device)
 

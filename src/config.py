@@ -6,8 +6,8 @@ from datetime import datetime
 
 # Paths
 # ---------------------------------------------------------------------------
-DATA_ROOT           = "./data" # Base directory for the dataset
-RESULTS_BASE_DIR    = "./" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S") # Base directory for results
+DATA_ROOT           = "./../data" # Base directory for the dataset
+RESULTS_BASE_DIR    = "./../" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 CHECKPOINT_DIR      = RESULTS_BASE_DIR + "/checkpoints" # Where model weights are saved
 LOG_DIR             = RESULTS_BASE_DIR + "/logs" # CSV logs
 RESULTS_DIR         = RESULTS_BASE_DIR + "/results" # Generated image samples

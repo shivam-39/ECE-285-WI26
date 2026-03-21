@@ -10,8 +10,8 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-import config as cfg
-from corruption import corrupt_batch, CORRUPTION_NAMES
+import src.config as cfg
+from src.corruption import corrupt_batch, CORRUPTION_NAMES
 
 
 # ---------------------------------------------------------------------------
@@ -93,7 +93,7 @@ def save_sample_grid(
 
     # One figure per corruption type
     for c_idx, c_name in enumerate(CORRUPTION_NAMES):
-        from corruption import corrupt_single, one_hot_vector
+        from src.corruption import corrupt_single, one_hot_vector
 
         y_list, c_list = [], []
         for i in range(n):

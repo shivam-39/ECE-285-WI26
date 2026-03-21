@@ -1,3 +1,5 @@
+# stability.py — Iterative Reconstruction Stability Analysis
+
 import os
 import math
 from typing import Dict, List, Optional, Tuple
@@ -11,8 +13,8 @@ import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 from tqdm import tqdm
 
-import config as cfg
-from corruption import _CORRUPTION_FNS, CORRUPTION_NAMES, one_hot_vector
+import src.config as cfg
+from src.corruption import _CORRUPTION_FNS, CORRUPTION_NAMES, one_hot_vector
 from evaluate   import psnr, ssim, compute_lpips
 
 

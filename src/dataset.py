@@ -9,7 +9,7 @@ from torch.utils.data import Dataset, DataLoader, random_split
 from torchvision import transforms
 from PIL import Image
 
-import config as cfg
+import src.config as cfg
 
 
 # Dataset class
