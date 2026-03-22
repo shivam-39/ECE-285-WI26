@@ -14,10 +14,8 @@ import src.config as cfg
 from src.corruption import corrupt_batch, CORRUPTION_NAMES
 
 
-# ---------------------------------------------------------------------------
 # Loss Curves
-# ---------------------------------------------------------------------------
-
+# ---------------------------------------------------------------------------s
 def plot_loss_curves(history: dict, save_dir: str = cfg.PLOT_DIR):
     """
     Plot training & validation loss curves from the history dict.
@@ -113,10 +111,13 @@ def save_sample_grid(
         img_grid = vutils.make_grid(grid, nrow=n, padding=4, normalize=False, pad_value=0.5)
 
         fig, ax = plt.subplots(figsize=(n * 2.5, 8))
-        ax.imshow(img_grid.permute(1, 2, 0).numpy())
+        ax.imshow(img_grid.permute(1, 2, 0).detach().cpu().numpy())
         ax.axis("off")
+        tmp_epoch = epoch
+        if tmp_epoch == cfg.NUM_EPOCHS:
+            tmp_epoch = 100
         ax.set_title(
-            f"Epoch {epoch}  |  Corruption: {c_name.upper()}\n"
+            f"Epoch {tmp_epoch}  |  Corruption: {c_name.upper()}\n"
             f"Top: Original   Middle: Corrupted   Bottom: Reconstructed",
             fontsize=10,
         )
@@ -132,7 +133,7 @@ def save_sample_grid(
 def print_hyperparameter_table(save_dir: str = cfg.PLOT_DIR): # type: ignore
     """Print a formatted table of all key hyperparameters and save as PNG."""
     rows = [
-        ("IMAGE RESOLUTION",        f"{cfg.IMG_SIZE} x {cfg.IMG_SIZE}"),
+        ("IMAGE RESOLUTION",        f"{cfg.IMG_SIZE} × {cfg.IMG_SIZE}"),
         ("Channels",                str(cfg.IMG_CHANNELS)),
         ("Dataset limit",           str(cfg.DATASET_LIMIT)),
         ("Train split",             f"{cfg.TRAIN_SPLIT:.0%}"),

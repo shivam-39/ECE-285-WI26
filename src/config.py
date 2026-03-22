@@ -6,8 +6,8 @@ from datetime import datetime
 
 # Paths
 # ---------------------------------------------------------------------------
-DATA_ROOT           = "./../data" # Base directory for the dataset
-RESULTS_BASE_DIR    = "./../" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+DATA_ROOT           = "./data" # Base directory for the dataset
+RESULTS_BASE_DIR    = "./" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 CHECKPOINT_DIR      = RESULTS_BASE_DIR + "/checkpoints" # Where model weights are saved
 LOG_DIR             = RESULTS_BASE_DIR + "/logs" # CSV logs
 RESULTS_DIR         = RESULTS_BASE_DIR + "/results" # Generated image samples
@@ -15,8 +15,7 @@ PLOT_DIR            = RESULTS_BASE_DIR + "/plots" # Loss curve plots
 
 
 # Derived — do not edit
-def make_dir():
-    for _d in [RESULTS_BASE_DIR, DATA_ROOT, CHECKPOINT_DIR, LOG_DIR, RESULTS_DIR, PLOT_DIR]:
+for _d in [RESULTS_BASE_DIR, DATA_ROOT, CHECKPOINT_DIR, LOG_DIR, RESULTS_DIR, PLOT_DIR]:
         os.makedirs(_d, exist_ok=True)
 
 
@@ -71,7 +70,7 @@ DISC_NUM_LAYERS   = 5 # no of layers in PatchGAN
 # Training
 # ---------------------------------------------------------------------------
 NUM_EPOCHS      = 100
-BATCH_SIZE      = 8 # 8 for 1xGPU with 16 GB RAM at 256x256 img
+BATCH_SIZE      = 64 # 8 for 1xGPU with 16 GB RAM at 256x256 img
 LEARNING_RATE_G = 1e-4 # Generator LR (Adam)
 LEARNING_RATE_D = 5e-5 # Discriminator LR (Adam)
 BETA1           = 0.5 # Adam beta_1
@@ -90,6 +89,7 @@ EVAL_INTERVAL        = 20 # Evaluate & save sample images every N epochs
 CHECKPOINT_INTERVAL  = 20 # Save checkpoint every N epochs
 NUM_EVAL_IMAGES      = 16 # Images shown in the sample grid
 STABILITY_ITERATIONS = 5 # Number of iterative reconstruction cycles
+METRIC_SAMPLE_N      = 5000 # Number of samples used for evaluating Inception & FID Score
 
 
 # Misc

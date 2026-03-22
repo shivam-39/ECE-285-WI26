@@ -60,19 +60,25 @@ https://www.kaggle.com/datasets/puneet6060/intel-image-classification
 ## Usage
 ```bash
 # Train from scratch
-python src/main.py
+python main.py
 
 # Resume training from a checkpoint
-python src/main.py --resume file_path/ckpt_epoch_0050.pt
+python main.py --resume file_path/ckpt_epoch_0050.pt
 
 # Override hyperparameters via CLI
-python src/main.py --img-size 128 --batch-size 16 --epochs 50
+python main.py --img-size 128 --batch-size 16 --epochs 50
 
 # Evaluate a trained model (no training)
-python src/main.py --eval-only --checkpoint file_path/final.pt
+python main.py --eval-only --checkpoint file_path/final.pt
 
 # Run iterative stability analysis only
-python src/main.py --stability-only --checkpoint file_path/final.pt
+python main.py --stability-only --checkpoint file_path/final.pt
+
+# Evaluate metrics for model performance for all corruption types
+python main.py --gan-metrics --checkpoint file_path/final.pt
+
+# Evaluate metrics for model performance for specific corruption_type from [mask, blur, lowres, noise]
+python main.py --gan-metrics --checkpoint file_path/final.pt --metrics-corruption corruption_type
 
 # Run Sota Comaprison with trained model - Evaluate LaMa only
 python src/sota_compare.py

@@ -11,16 +11,15 @@ import src.config as cfg
 
 # Corruption index constants (matches CORRUPTION_PROBS order in config)
 # ---------------------------------------------------------------------------
-CORRUPTION_MASK =   0
-CORRUPTION_BLUR =   1
+CORRUPTION_MASK = 0
+CORRUPTION_BLUR = 1
 CORRUPTION_LOWRES = 2
-CORRUPTION_NOISE =  3
+CORRUPTION_NOISE = 3
 CORRUPTION_NAMES = ["mask", "blur", "lowres", "noise"]
 
 
 # Individual corruption functions  (operate on CHW tensors in [-1, 1])
 # ---------------------------------------------------------------------------
-
 def apply_mask(x: torch.Tensor) -> torch.Tensor:
     """Random rectangular binary-mask corruption."""
     _, H, W = x.shape
@@ -49,6 +48,7 @@ def apply_blur(x: torch.Tensor) -> torch.Tensor:
     kernel_2d = gauss.unsqueeze(1) * gauss.unsqueeze(0) # [k, k]
     kernel_2d = kernel_2d.unsqueeze(0).unsqueeze(0) # [1, 1, k, k]
     kernel_2d = kernel_2d.repeat(x.shape[0], 1, 1, 1) # [C, 1, k, k]
+    kernel_2d = kernel_2d.to(x.device) 
     x_4d = x.unsqueeze(0) # [1, C, H, W]
     padding = k // 2
     blurred = F.conv2d(x_4d, kernel_2d, padding=padding, groups=x.shape[0])

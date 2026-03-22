@@ -15,7 +15,7 @@ from tqdm import tqdm
 
 import src.config as cfg
 from src.corruption import _CORRUPTION_FNS, CORRUPTION_NAMES, one_hot_vector
-from evaluate   import psnr, ssim, compute_lpips
+from src.evaluate   import psnr, ssim, compute_lpips
 
 
 # Output sub-directory

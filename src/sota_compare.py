@@ -16,8 +16,8 @@ from PIL import Image
 from tqdm import tqdm
 
 import src.config as cfg
-from dataset import build_dataloaders
-from evaluate import psnr, ssim, compute_lpips   # reuse test_model metric functions
+from src.dataset import build_dataloaders
+from src.evaluate import psnr, ssim, compute_lpips   # reuse test_model metric functions
 from src.corruption import corrupt_batch         # to extract masks for LaMa
 
 

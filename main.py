@@ -8,13 +8,13 @@ import numpy as np
 import torch
 
 import src.config as cfg
-from dataset   import build_dataloaders
-from models    import build_models, print_model_summary
-from train     import train, load_checkpoint
-from evaluate  import evaluate, stability_analysis
-from visualize import print_hyperparameter_table, save_sample_grid
-from stability import run_stability_analysis
-from gan_metrics import evaluate_gan_metrics, evaluate_all_corruptions
+from src.dataset   import build_dataloaders
+from src.models    import build_models, print_model_summary
+from src.train     import train, load_checkpoint
+from src.evaluate  import evaluate, stability_analysis
+from src.visualize import print_hyperparameter_table, save_sample_grid
+from src.stability import run_stability_analysis
+from src.gan_metrics import evaluate_gan_metrics, evaluate_all_corruptions
 
 
 
@@ -79,7 +79,7 @@ def parse_args():
     
     p.add_argument("--metrics-n",     
                    type=int, 
-                   default=5000,
+                   default=cfg.METRIC_SAMPLE_N,
                    help="Number of images for IS/FID evaluation (default: 5000).")
     
     p.add_argument("--metrics-corruption", 
@@ -116,7 +116,7 @@ def main():
         print("[OK] CUDA available — running on GPU (training will be fast).")
 
     # Check and create dirs if required.
-    cfg.make_dir() 
+    # cfg.make_dir() 
     # Print hyperparameter table
     print_hyperparameter_table()
     
@@ -163,20 +163,17 @@ def main():
     
     # GAN metrics (IS + FID) 
     if args.gan_metrics:
-        from corruption import CORRUPTION_NAMES
+        from src.corruption import CORRUPTION_NAMES
         if not (args.checkpoint or args.resume):
             print("[Error] --gan-metrics requires --checkpoint <path>")
             return
  
         c_arg = args.metrics_corruption
         if c_arg == "all":
-            evaluate_all_corruptions(G, val_loader, device,
-                                     n_samples=args.metrics_n)
+            evaluate_all_corruptions(G, val_loader, device, n_samples=args.metrics_n)
         else:
             c_idx = -1 if c_arg == "random" else CORRUPTION_NAMES.index(c_arg)
-            evaluate_gan_metrics(G, val_loader, device,
-                                 n_samples=args.metrics_n,
-                                 corruption_idx=c_idx)
+            evaluate_gan_metrics(G, val_loader, device, n_samples=args.metrics_n, corruption_idx=c_idx)
         return
 
     # Full training

@@ -13,8 +13,8 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-import config as cfg
-from corruption import corrupt_batch, one_hot_vector, _CORRUPTION_FNS, CORRUPTION_NAMES
+import src.config as cfg
+from src.corruption import corrupt_batch, one_hot_vector, _CORRUPTION_FNS, CORRUPTION_NAMES
 
 
 # InceptionV3 wrapper
@@ -281,7 +281,7 @@ def evaluate_gan_metrics(
     G,
     val_loader,
     device:         str,
-    n_samples:      int = 5000,
+    n_samples:      int = cfg.METRIC_SAMPLE_N,
     corruption_idx: int = -1,
     n_splits:       int = 10,
     label:          str = "random",
@@ -327,7 +327,7 @@ def evaluate_all_corruptions(
     G,
     val_loader,
     device:    str,
-    n_samples: int = 5000,
+    n_samples: int = cfg.METRIC_SAMPLE_N,
     n_splits:  int = 10,
 ) -> dict:
     """

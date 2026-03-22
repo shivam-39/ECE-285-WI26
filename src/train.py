@@ -1,4 +1,4 @@
-# train.py — Training
+# train.py — Training Loop
 
 import os
 import csv
@@ -6,17 +6,42 @@ import time
 
 import torch
 import torch.nn as nn
-from torch.amp.autocast_mode import autocast
-from torch.amp.grad_scaler import GradScaler
 from tqdm import tqdm
+
+# PyTorch 2.2+ preferred path
+try:
+    from torch.amp import GradScaler
+    from torch.amp import autocast as _autocast
+    
+    def autocast(enabled=True): # wrap to keep call-site uniform
+        return _autocast("cuda", enabled=enabled)
+
+# PyTorch 1.x / 2.0 path
+except ImportError:
+    try:
+        from torch.cuda.amp import GradScaler, autocast
+    except ImportError:
+        # Absolute fallback: AMP disabled, use no-op stubs
+        import contextlib
+
+        cfg.USE_AMP = False
+        @contextlib.contextmanager
+        def autocast(enabled=False):
+            yield
+
+        class GradScaler:
+            def scale(self, loss): return loss
+            def step(self, opt): opt.step()
+            def update(self): pass
+
 
 import src.config as cfg
 from src.corruption import corrupt_batch
-from losses import TotalLoss
-from visualize import save_sample_grid, plot_loss_curves
+from src.losses import TotalLoss
+from src.visualize import save_sample_grid, plot_loss_curves
 
 
-# Optimisers
+# Optimiser factory
 # ---------------------------------------------------------------------------
 def build_optimizers(G, D):
     opt_G = torch.optim.Adam(
@@ -61,10 +86,10 @@ def train_one_epoch(
         c = c.to(device, non_blocking=True)
         d_loss = torch.Tensor()
 
-        # Step 1 — Update Discriminator
+        # Step 1 — Update Discriminator  (D_STEPS_PER_G times)
         for _ in range(cfg.D_STEPS_PER_G):
             opt_D.zero_grad(set_to_none=True)
-            with autocast(device, enabled=cfg.USE_AMP):
+            with autocast():
                 with torch.no_grad():
                     x_fake = G(y, c)
                 d_loss = loss_fn.discriminator_loss(D, x_real, x_fake)
@@ -75,7 +100,7 @@ def train_one_epoch(
 
         # Step 2 — Update Generator
         opt_G.zero_grad(set_to_none=True)
-        with autocast(device, enabled=cfg.USE_AMP):
+        with autocast():
             x_fake = G(y, c)
             g_losses = loss_fn.generator_loss(D, G, x_real, y, c, x_fake, corrupt_batch)
 
