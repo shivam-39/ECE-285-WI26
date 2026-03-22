@@ -30,7 +30,7 @@ requirements.txt -> package dependencies
 ```bash
 # Recommended - conda & python 3.11
 conda create --name cars_gan python=3.11
-conda activate cars_dcgan
+conda activate cars_gan
 
 # If using UV
 uv venv .vcars_gan && source .vcars_gan/bin/activate
