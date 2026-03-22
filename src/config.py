@@ -70,7 +70,7 @@ DISC_NUM_LAYERS   = 5 # no of layers in PatchGAN
 
 # Training
 # ---------------------------------------------------------------------------
-NUM_EPOCHS      = 2
+NUM_EPOCHS      = 100
 BATCH_SIZE      = 8 # 8 for 1xGPU with 16 GB RAM at 256x256 img
 LEARNING_RATE_G = 1e-4 # Generator LR (Adam)
 LEARNING_RATE_D = 5e-5 # Discriminator LR (Adam)
