@@ -26,7 +26,7 @@ IMG_SIZE        = 256 # Resolution (H = W). We use 256, can be reduced to 128 fo
 IMG_CHANNELS    = 3 # RGB
 NUM_WORKERS     = 4 # Dataloader workers
 TRAIN_SPLIT     = 0.9 # Fraction used for training
-DATASET_LIMIT   = 100 # Max images loaded from disk (None = all)
+DATASET_LIMIT   = None # Max images loaded from disk (None = all)
 
 
 # Corruption Sampling
@@ -65,29 +65,29 @@ GEN_NUM_DOWNS    = 6 # Number of down-sampling stages (encoder depth). At IMG_SI
 
 # Discriminator (PatchDCGAN)
 DISC_BASE_FILTERS = 64
-DISC_NUM_LAYERS   = 3 # no of layers in PatchGAN
+DISC_NUM_LAYERS   = 5 # no of layers in PatchGAN
 
 
 # Training
 # ---------------------------------------------------------------------------
 NUM_EPOCHS      = 2
 BATCH_SIZE      = 8 # 8 for 1xGPU with 16 GB RAM at 256x256 img
-LEARNING_RATE_G = 2e-4 # Generator LR (Adam)
-LEARNING_RATE_D = 1e-4 # Discriminator LR (Adam)
+LEARNING_RATE_G = 1e-4 # Generator LR (Adam)
+LEARNING_RATE_D = 5e-5 # Discriminator LR (Adam)
 BETA1           = 0.5 # Adam beta_1
 BETA2           = 0.999 # Adam beta_2
 
 # Loss weights
-LAMBDA_GAN  = 1.0 # GAN Loss weight
-LAMBDA_L1   = 1.0 # Pixel reconstruction weight
+LAMBDA_GAN  = 8.0 # GAN Loss weight
+LAMBDA_L1   = 4.0 # Pixel reconstruction weight
 LAMBDA_STAB = 1.0 # Stability regularisation weight
 
 # Discriminator update frequency
 D_STEPS_PER_G = 1 # Train D this many times per G update
 
 # Evaluation & Logging
-EVAL_INTERVAL        = 5 # Evaluate & save sample images every N epochs
-CHECKPOINT_INTERVAL  = 10 # Save checkpoint every N epochs
+EVAL_INTERVAL        = 20 # Evaluate & save sample images every N epochs
+CHECKPOINT_INTERVAL  = 20 # Save checkpoint every N epochs
 NUM_EVAL_IMAGES      = 16 # Images shown in the sample grid
 STABILITY_ITERATIONS = 5 # Number of iterative reconstruction cycles
 
