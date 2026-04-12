@@ -2,7 +2,7 @@
 
 Stable and Robust Image Inpainting Using Corruption-Aware GANs and Iterative Reconstruction Stability Analysis.
 
-#### **The project was done as part of the course CSE-291 at UCSD.
+#### **The project was done as part of the course ECE-285 at UCSD.
 
 ---
 
